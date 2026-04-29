@@ -1,0 +1,65 @@
+import json
+import os
+
+# The name of our "Notebook" file
+DB_FILE = "students.json"
+
+# --- Helper Functions ---
+
+def load_data():
+    """Opens the notebook and reads the students."""
+    if not os.path.exists(DB_FILE):
+        return [] # If the file doesn't exist yet, return an empty list
+    with open(DB_FILE, "r") as f:
+        return json.load(f)
+
+def save_data(data):
+    """Saves the list of students back into the notebook."""
+    with open(DB_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+# --- The Main Operations ---
+
+def manage_students():
+    # 1. Start fresh or load existing
+    students = load_data()
+
+    # 2. Insert 3 Student Records
+    print("--- Adding 3 Students ---")
+    new_students = [
+        {"id": 1, "name": "Rahul", "age": 22, "city": "Delhi"},
+        {"id": 2, "name": "Ananya", "age": 19, "city": "Mumbai"},
+        {"id": 3, "name": "Siddharth", "age": 25, "city": "Bangalore"}
+    ]
+    
+    # Validation: Only add if age is 18+ (Manual Check Constraint)
+    for s in new_students:
+        if s["age"] >= 18:
+            students.append(s)
+    
+    save_data(students)
+
+    # 3. Fetch All Students
+    print("Current Students in JSON:")
+    for s in students:
+        print(s)
+
+    # 4. Update City of student where name = "Rahul"
+    print("\n--- Updating Rahul's City to Pune ---")
+    for s in students:
+        if s["name"] == "Rahul":
+            s["city"] = "Pune"
+    save_data(students)
+
+    # 5. Delete student whose age < 20
+    print("--- Deleting Students Under 20 ---")
+    # We keep only the students who are 20 or older
+    students = [s for s in students if s["age"] >= 20]
+    save_data(students)
+
+    # Final Verification
+    print("\nFinal Notebook State:")
+    print(json.dumps(students, indent=4))
+
+if __name__ == "__main__":
+    manage_students()
